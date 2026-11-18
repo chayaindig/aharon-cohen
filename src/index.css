@@ -287,3 +287,17 @@ body {
   .px, .hero-tag { transition: none; opacity: 1; transform: none; }
   .px-row, .px-spark { animation: none; }
 }
+
+/* ---- Service cards: one logo colour each ---- */
+.service-bar {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: transform 700ms var(--ease-out-soft) var(--b);
+}
+.service-card.is-on .service-bar { transform: scaleY(1); }
+.service-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.service-card:hover .service-bar { transform: scaleY(1.22); transition-duration: 380ms; transition-delay: var(--hb); }
+@media (prefers-reduced-motion: reduce) {
+  .service-bar { transition: none; transform: none; }
+  .service-card:hover .service-bar { transform: none; }
+}
