@@ -101,10 +101,12 @@ body {
   border-radius: 6px;
 }
 
-/* Paper grain: one material for the whole site */
+/* Paper grain: one material for the whole site. In a layer so utilities like `fixed` still win. */
+@layer components {
 .grain {
   position: relative;
   isolation: isolate;
+}
 }
 .grain::after {
   content: "";
