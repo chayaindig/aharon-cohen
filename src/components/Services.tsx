@@ -40,7 +40,7 @@ export default function Services() {
                 0{i + 1}
               </span>
               {/* this card's group of bars from the logo, rising as the card arrives */}
-              <span aria-hidden="true" className="absolute top-7 left-7 flex h-14 items-end gap-[5px] md:top-9 md:left-9">
+              <span aria-hidden="true" dir="ltr" className="absolute top-7 left-7 flex h-14 items-end gap-[5px] md:top-9 md:left-9">
                 {BAR_HEIGHTS.map((h, b) => (
                   <span
                     key={b}
