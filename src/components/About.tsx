@@ -27,7 +27,7 @@ function Skyline() {
   const still = useTransform(scrollYProgress, () => 1)
   const progress = reduce ? still : scrollYProgress
   return (
-    <div ref={ref} aria-hidden="true" className="absolute inset-x-[4%] bottom-0 top-[6%] flex items-end justify-center gap-[clamp(14px,2vw,28px)]">
+    <div ref={ref} aria-hidden="true" className="absolute inset-x-0 bottom-0 top-[4%] flex items-end justify-between">
       {GROUPS.map((g, gi) => (
         <div key={gi} className="flex h-full items-end gap-[clamp(5px,0.8vw,10px)]">
           {[0, 1, 2, 3].map((b) => (
