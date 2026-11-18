@@ -1,29 +1,30 @@
+import logo from '../logo.svg?raw'
 import { contact } from '../data'
 import { WipeButton } from './ui'
 
-/* Closing band from the ANIMTD wipe-arrow-button prompt: ghost number cut by the edge, 8/4 grid */
+/* Closing band from the ANIMTD wipe-arrow-button prompt: the logo as a ghost, cut by the edge, 8/4 grid */
 export default function Contact() {
   return (
-    <section id="contact" aria-labelledby="contact-title" className="relative overflow-x-clip bg-petrol-deep text-paper">
-      <div className="mx-auto grid max-w-[1360px] gap-x-16 px-5 pt-20 pb-20 md:px-10 md:pt-24 md:pb-28 lg:grid-cols-[8fr_4fr]">
-        <p
-          aria-hidden="true"
-          dir="ltr"
-          className="pointer-events-none -ms-[clamp(20px,6vw,120px)] font-display text-[clamp(9rem,5rem+16vw,19rem)] leading-[0.8] font-bold text-gold/[0.12] select-none lg:col-span-2"
-          style={{ textAlign: 'left' }}
-        >
-          2015
-        </p>
-        <div className="-mt-[clamp(2.5rem,1rem+5vw,6rem)]">
-          <h2 id="contact-title" className="font-display text-section font-bold">
-            צריכים שומה?
+    <section id="contact" aria-labelledby="contact-title" className="relative overflow-x-clip bg-night text-paper">
+      <div className="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 -left-[12%] w-[min(110vw,1100px)] -translate-y-1/2 opacity-[0.07] [--logo-hole:transparent] [&_path]:fill-paper [&>svg]:h-auto [&>svg]:w-full"
+        dangerouslySetInnerHTML={{ __html: logo }}
+      />
+      <div className="relative mx-auto grid max-w-[1360px] gap-x-16 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-[8fr_4fr]">
+        <div>
+          <h2 id="contact-title" className="font-display text-section">
+            לפני שחותמים,
             <br />
-            <span className="text-gold">בואו נדבר.</span>
+            <span className="text-gold">יודעים כמה זה שווה.</span>
           </h2>
           <p className="mt-6 max-w-[32rem] text-body text-paper/75">
-            כתבו לי בוואטסאפ או התקשרו, בין {contact.hours}. אחזור אליכם עם כל מה שצריך לדעת לפני שמתחילים.
+            שלחו לי הודעה על הנכס. אחזור אליכם עם מה שצריך, כמה זה עולה ומתי חוות הדעת אצלכם.
           </p>
-          <p className="mt-6 text-note text-paper/60">משרד: {contact.address}</p>
+          <p className="mt-6 text-note text-paper/55">
+            {contact.address} · זמין {contact.hours}
+          </p>
         </div>
 
         <div className="mt-12 flex flex-col items-start gap-5 lg:mt-0 lg:self-end">

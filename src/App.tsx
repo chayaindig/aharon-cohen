@@ -1,5 +1,8 @@
+import { useState } from 'react'
+import Preloader from './components/Preloader'
 import Header from './components/Header'
 import Hero from './components/Hero'
+import Trust from './components/Trust'
 import About from './components/About'
 import Services from './components/Services'
 import Process from './components/Process'
@@ -9,15 +12,18 @@ import { Icon } from './components/ui'
 import { contact, nav } from './data'
 
 export default function App() {
+  const [ready, setReady] = useState(false)
   return (
     <>
+      <Preloader onDone={() => setReady(true)} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-50 focus:rounded-full focus:bg-petrol focus:px-5 focus:py-3 focus:text-paper">
         דילוג לתוכן
       </a>
       <div id="top" />
       <Header />
       <main id="main">
-        <Hero />
+        <Hero start={ready} />
+        <Trust />
         <About />
         <Services />
         <Process />

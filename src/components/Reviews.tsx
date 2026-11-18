@@ -1,48 +1,84 @@
+import { useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { reviews } from '../data'
-import { useInView } from './ui'
+import { Icon } from './ui'
 
+/* One quote in the big box, the rest in a carousel. Picking one from the carousel swaps it into the box. */
 export default function Reviews() {
-  const [first, ...rest] = reviews
-  const [ref, on] = useInView<HTMLDivElement>(0.2)
-  return (
-    <section id="reviews" aria-labelledby="reviews-title" className="bg-paper py-24 md:py-36">
-      <div ref={ref} className="mx-auto max-w-[1360px] px-5 md:px-10">
-        <h2 id="reviews-title" className="font-display text-section font-bold text-petrol">
-          מה כותבים
-          <br />
-          הלקוחות
-        </h2>
+  const [active, setActive] = useState(0)
+  const reduce = useReducedMotion()
+  const track = useRef<HTMLUListElement>(null)
+  const current = reviews[active]
+  const others = reviews.map((r, i) => ({ ...r, i })).filter((r) => r.i !== active)
 
-        <figure className="mt-14 grid gap-8 border-t border-petrol/25 pt-12 lg:grid-cols-[1fr_4fr]">
-          <span aria-hidden="true" className="font-display text-[clamp(6rem,4rem+6vw,10rem)] leading-[0.7] font-bold text-gold">
+  const scrollBy = (dir: 1 | -1) => {
+    const el = track.current
+    if (!el) return
+    const card = el.querySelector('li')
+    // RTL: the next card sits to the left, so "next" scrolls toward negative x
+    el.scrollBy({ left: -dir * ((card?.clientWidth ?? 300) + 16), behavior: reduce ? 'auto' : 'smooth' })
+  }
+
+  return (
+    <section id="reviews" aria-labelledby="reviews-title" className="grain overflow-x-clip bg-sand py-24 md:py-32">
+      <div className="mx-auto max-w-[1360px] px-5 md:px-10">
+        <div className="flex items-end justify-between gap-6">
+          <h2 id="reviews-title" className="font-display text-section text-petrol">
+            מה כותבים
+            <br />
+            הלקוחות
+          </h2>
+          <div className="hidden gap-2 md:flex">
+            <button type="button" onClick={() => scrollBy(-1)} aria-label="ההמלצה הקודמת" className="grid size-12 place-items-center rounded-full border border-petrol/25 text-petrol transition-colors hover:bg-petrol hover:text-paper">
+              <Icon name="arrow" className="size-5 rotate-180" />
+            </button>
+            <button type="button" onClick={() => scrollBy(1)} aria-label="ההמלצה הבאה" className="grid size-12 place-items-center rounded-full border border-petrol/25 text-petrol transition-colors hover:bg-petrol hover:text-paper">
+              <Icon name="arrow" className="size-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* the big box */}
+        <figure className="relative mt-12 min-h-[19rem] overflow-hidden rounded-[22px] bg-petrol-deep p-8 text-paper md:min-h-[21rem] md:p-14" aria-live="polite">
+          <span aria-hidden="true" className="ghost-num absolute -top-4 left-6 text-[clamp(9rem,6rem+8vw,15rem)] text-gold/25">
             ”
           </span>
-          <div>
-            <blockquote
-              className={`font-display text-[clamp(1.7rem,1.2rem+1.8vw,2.9rem)] leading-[1.2] font-[200] text-ink transition-[opacity,filter] duration-1000 motion-reduce:transition-none ${
-                on ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'
-              }`}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={active}
+              initial={reduce ? false : { opacity: 0, y: 14, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={reduce ? undefined : { opacity: 0, y: -10, filter: 'blur(6px)' }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="relative max-w-[56rem]"
             >
-              {first.quote}
-            </blockquote>
-            <figcaption className="mt-6 text-note text-muted">{first.service}</figcaption>
-          </div>
+              <blockquote className="font-display text-[clamp(1.5rem,1.1rem+1.5vw,2.5rem)] leading-[1.3]">{current.quote}</blockquote>
+              <figcaption className="mt-8 flex items-center gap-3 text-note text-paper/70">
+                <span className="h-px w-8 bg-gold" aria-hidden="true" />
+                {current.service}
+              </figcaption>
+            </motion.div>
+          </AnimatePresence>
         </figure>
 
-        <ul className="mt-16 grid gap-px overflow-hidden rounded-[18px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-          {rest.map((r, i) => (
-            <li
-              key={r.quote}
-              className={`flex flex-col justify-between gap-8 bg-paper p-7 transition-[opacity,transform] duration-700 motion-reduce:transition-none md:p-8 ${
-                on ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              }`}
-              style={{ transitionDelay: `${300 + i * 100}ms` }}
-            >
-              <blockquote className="text-body text-ink">{r.quote}</blockquote>
-              <p className="flex items-center gap-2 text-note text-muted">
-                <span className="h-[2px] w-4 bg-gold" aria-hidden="true" />
-                {r.service}
-              </p>
+        {/* the carousel */}
+        <ul ref={track} className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2" aria-label="עוד המלצות">
+          {others.map((r) => (
+            <li key={r.i} className="w-[min(82%,22rem)] shrink-0 snap-start">
+              <button
+                type="button"
+                onClick={() => setActive(r.i)}
+                className="group flex h-full w-full flex-col justify-between gap-6 rounded-[18px] border border-line bg-paper p-6 text-start transition-colors hover:border-petrol/40"
+                aria-label={`להציג את ההמלצה: ${r.service}`}
+              >
+                <span className="line-clamp-4 text-body text-ink">{r.quote}</span>
+                <span className="flex w-full items-center justify-between text-note text-muted">
+                  {r.service}
+                  <span className="text-petrol opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true">
+                    להגדיל
+                  </span>
+                </span>
+              </button>
             </li>
           ))}
         </ul>

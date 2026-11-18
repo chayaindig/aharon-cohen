@@ -23,14 +23,12 @@ export default function Process() {
               className="sticky mb-6 last:mb-0"
               style={{ top: `calc(var(--header-h) + 32px + ${i * 22}px)` }}
             >
-              <article className="flex min-h-[15rem] flex-col justify-between gap-10 rounded-[18px] border border-paper/10 bg-[#0a4850] p-7 shadow-[0_-20px_40px_-24px_rgb(0_0_0/0.5)] md:min-h-[17rem] md:p-10">
-                <div className="flex items-start justify-between gap-6">
-                  <h3 className="font-display text-sub font-bold text-paper">{s.title}</h3>
-                  <span className="font-display text-[clamp(3rem,2rem+3vw,5rem)] leading-[0.8] font-[200] text-gold" aria-hidden="true">
-                    0{i + 1}
-                  </span>
-                </div>
-                <p className="max-w-[34rem] text-body text-paper/80">{s.text}</p>
+              <article className="flex min-h-[15rem] flex-col justify-between gap-10 relative overflow-hidden rounded-[18px] border border-paper/10 bg-[#0a4850] p-7 shadow-[0_-20px_40px_-24px_rgb(0_0_0/0.5)] md:min-h-[17rem] md:p-10">
+                <span aria-hidden="true" dir="ltr" className="ghost-num absolute -bottom-4 -left-2 text-[clamp(8rem,6rem+7vw,13rem)] text-gold/[0.13]">
+                  0{i + 1}
+                </span>
+                <h3 className="relative font-display text-sub text-paper">{s.title}</h3>
+                <p className="relative max-w-[30rem] text-body text-paper/80">{s.text}</p>
               </article>
             </li>
           ))}
