@@ -18,7 +18,7 @@ const TAGS = [
   { y: 16, x: 8, label: 'קומה 5 מתוך 6' },
   { y: 38, x: 52, label: '118 מ״ר, 4 חדרים' },
   { y: 58, x: 10, label: 'מרפסת 14 מ״ר' },
-  { y: 80, x: 46, label: '12 עסקאות השוואה בסביבה' },
+  { y: 72, x: 30, label: '12 עסקאות השוואה בסביבה' },
 ]
 
 const ease = (t: number) => 1 - Math.pow(1 - t, 3)
@@ -65,7 +65,7 @@ export default function Hero({ start }: { start: boolean }) {
         style={{ background: 'radial-gradient(60% 70% at 25% 40%, rgb(25 135 150 / 0.22), transparent 70%)' }}
       />
 
-      <div className="relative mx-auto grid max-w-[1360px] items-center gap-12 px-5 pt-12 pb-16 md:px-10 lg:min-h-[calc(100svh-var(--header-h))] lg:grid-cols-[7fr_5fr] lg:gap-16 lg:py-16">
+      <div className="relative mx-auto grid max-w-[1360px] items-center gap-12 px-5 pt-12 pb-24 md:px-10 lg:min-h-[calc(100svh-var(--header-h))] lg:grid-cols-[7fr_5fr] lg:gap-16 lg:py-16">
         <div>
           <h1 id="hero-title" className="font-display text-hero">
             <span className="block whitespace-nowrap">כמה הנכס</span>
@@ -149,7 +149,7 @@ export default function Hero({ start }: { start: boolean }) {
           </div>
 
           {/* the value, counting up with the scan */}
-          <div className="absolute -bottom-8 right-4 z-[2] w-[min(17.5rem,78%)] rounded-[14px] bg-paper px-6 py-5 text-ink shadow-[0_30px_60px_-24px_rgb(0_0_0/0.6)] lg:-right-14">
+          <div className="absolute -bottom-16 left-3 z-[2] w-[min(15.5rem,66%)] rounded-[14px] bg-paper px-5 py-4 sm:-bottom-8 sm:px-6 sm:py-5 text-ink shadow-[0_30px_60px_-24px_rgb(0_0_0/0.6)] lg:left-auto lg:-right-14">
             <p className="text-note text-muted">שווי שוק מוערך</p>
             <p dir="ltr" aria-hidden="true" className="mt-1 font-display text-[clamp(2.1rem,1.6rem+1.6vw,3rem)] leading-none text-petrol tabular-nums" style={{ textAlign: 'right' }}>
               {fmt(VALUE * ease(p))}

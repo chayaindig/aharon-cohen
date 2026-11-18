@@ -23,7 +23,7 @@ export default function Header() {
   return (
     <header
       className={`sticky top-0 z-40 h-[var(--header-h)] border-b transition-colors duration-300 ${
-        scrolled || open ? 'border-line bg-paper/95' : 'border-transparent bg-paper'
+        scrolled || open ? 'border-line bg-paper' : 'border-transparent bg-paper'
       }`}
     >
       <div className="mx-auto flex h-full max-w-[1360px] items-center gap-6 px-5 md:px-10">
