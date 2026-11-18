@@ -40,7 +40,9 @@ const LEAD =
 
 function BlurWords({ text }: { text: string }) {
   const [ref, on] = useInView<HTMLParagraphElement>(0.4)
-  const words = text.split(' ')
+  // the last two words travel together, so the paragraph never ends on a lone word
+  const split = text.split(' ')
+  const words = [...split.slice(0, -2), split.slice(-2).join(' ')]
   return (
     <p ref={ref} className="text-sub font-[300] text-ink">
       {words.map((w, i) => (

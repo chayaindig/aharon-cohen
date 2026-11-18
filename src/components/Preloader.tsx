@@ -12,6 +12,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
   const reduced = usePrefersReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const [done, setDone] = useState(false)
+  const [gone, setGone] = useState(false)
   const finished = useRef(false)
 
   const finish = () => {
@@ -19,6 +20,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
     finished.current = true
     setDone(true)
     onDone()
+    setTimeout(() => setGone(true), 700) // remove the layer once it has faded out
   }
 
   // Tag the traced paths: bars of the mark rise, the lettering fades in after them
@@ -62,6 +64,8 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
       document.documentElement.style.overflow = ''
     }
   }, [done])
+
+  if (gone) return null
 
   return (
     <div
