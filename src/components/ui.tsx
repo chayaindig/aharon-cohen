@@ -81,7 +81,7 @@ export function WipeButton({ href, children, variant = 'primary', icon, classNam
   const isLink = variant === 'link' || variant === 'light-link'
   return (
     <a href={href} {...ext} className={`wipe wipe--${variant} ${isLink ? '' : 'wipe--btn'} ${className}`}>
-      {icon && <Icon name={icon} className="wipe__lead size-5" />}
+      {icon && <Icon name={icon} className={`wipe__lead size-5 ${icon === 'whatsapp' ? 'text-[#25D366]' : ''}`} />}
       <span className="wipe__label">{children}</span>
       <span className="wipe__arrow" aria-hidden="true">
         <Icon name="arrow" className="wipe__a1" />

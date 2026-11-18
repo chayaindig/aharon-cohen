@@ -262,8 +262,21 @@ body {
 @keyframes word-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* ---- Pixel logo behind the portrait ---- */
-.px { transform-box: fill-box; transform-origin: center; opacity: 0; transform: scale(0.2); transition: opacity 500ms ease, transform 600ms var(--ease-out-soft); transition-delay: var(--d); }
-.is-on .px { opacity: var(--o, 1); transform: none; }
+.px {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0.2);
+  /* pixels near the cursor lift (desktop) */
+  scale: calc(1 + 0.9 * max(0, 1 - hypot(var(--x) - var(--mx, -99), var(--y) - var(--my, -99)) / 4));
+  transition: opacity 500ms ease var(--d), transform 600ms var(--ease-out-soft) var(--d), scale 220ms ease 0s;
+}
+.is-on .px { opacity: 1; transform: none; }
+.px-row { animation: px-wave 4.2s ease-in-out infinite; animation-play-state: paused; }
+.px-spark { fill: var(--color-gold); opacity: 0; animation: px-spark 3s ease-in-out infinite; animation-play-state: paused; }
+.is-live .px-row, .is-live .px-spark { animation-play-state: running; }
+@keyframes px-wave { 0%, 100% { fill-opacity: 1; } 50% { fill-opacity: 0.45; } }
+@keyframes px-spark { 0%, 100% { opacity: 0; } 50% { opacity: 0.85; } }
 
 /* ---- Hero scan ---- */
 .hero-tag { opacity: 0; transform: translateY(6px) scale(0.96); transition: opacity 360ms ease, transform 420ms var(--ease-out-soft); }
@@ -271,5 +284,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .preloader { display: none; }
-  .px, .hero-tag { transition: none; opacity: var(--o, 1); transform: none; }
+  .px, .hero-tag { transition: none; opacity: 1; transform: none; }
+  .px-row, .px-spark { animation: none; }
 }

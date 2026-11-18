@@ -33,7 +33,7 @@ export default function App() {
 
       <footer className="bg-paper py-12">
         <div className="mx-auto flex max-w-[1360px] flex-col gap-8 px-5 md:flex-row md:items-center md:justify-between md:px-10">
-          <img src={`${import.meta.env.BASE_URL}img/logo.webp`} alt={`${contact.name}, ${contact.tagline}`} width="924" height="577" loading="lazy" className="h-14 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}img/logo.webp`} alt={`${contact.name}, ${contact.tagline}`} width="924" height="577" loading="lazy" className="h-14 w-auto self-start object-contain" />
           <nav aria-label="ניווט תחתון">
             <ul className="flex flex-wrap gap-x-6 gap-y-2 text-note text-muted">
               {nav.map((n) => (
@@ -56,7 +56,7 @@ export default function App() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="שליחת הודעה בוואטסאפ"
-        className="fixed right-4 bottom-4 z-50 grid size-14 place-items-center rounded-full bg-petrol text-paper shadow-[0_12px_30px_-10px_rgb(5_58_65/0.6)] transition-transform hover:scale-105 md:right-6 md:bottom-6"
+        className="fixed right-4 bottom-4 z-50 grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-10px_rgb(0_0_0/0.45)] transition-transform hover:scale-105 md:right-6 md:bottom-6"
       >
         <Icon name="whatsapp" className="size-7" />
       </a>

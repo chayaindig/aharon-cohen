@@ -50,6 +50,39 @@ export default function Hero({ start }: { start: boolean }) {
   const scan = ease(p) * 100 // % of the frame already turned into the real building
   const done = p >= 1
 
+  // Touch screens have no cursor: the lens glides over the building by itself, a tap moves it there
+  const tapAt = useRef<{ x: number; y: number; t: number } | null>(null)
+  useEffect(() => {
+    if (!done || reduced || !window.matchMedia('(hover: none)').matches) return
+    const frame = frameRef.current
+    if (!frame) return
+    let raf = 0
+    let visible = true
+    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting))
+    io.observe(frame)
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      if (visible) {
+        const t = now - t0
+        const tap = tapAt.current
+        if (tap && now - tap.t < 2200) setLens({ x: tap.x, y: tap.y })
+        else setLens({ x: 50 + 30 * Math.sin(t / 2300), y: 48 + 30 * Math.sin(t / 3700 + 1) })
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => {
+      cancelAnimationFrame(raf)
+      io.disconnect()
+    }
+  }, [done, reduced])
+
+  const onTap = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') return
+    const r = frameRef.current!.getBoundingClientRect()
+    tapAt.current = { x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100, t: performance.now() }
+  }
+
   const onMove = (e: React.PointerEvent) => {
     if (!done || e.pointerType !== 'mouse') return
     const r = frameRef.current!.getBoundingClientRect()
@@ -91,7 +124,8 @@ export default function Hero({ start }: { start: boolean }) {
           <div
             ref={frameRef}
             onPointerMove={onMove}
-            onPointerLeave={() => setLens(null)}
+            onPointerDown={onTap}
+            onPointerLeave={(e) => e.pointerType === 'mouse' && setLens(null)}
             className="relative aspect-[1200/1490] overflow-hidden rounded-[4px] ring-1 ring-paper/15"
             role="img"
             aria-label="בניין מגורים מאבן שהופך משרטוט לבניין אמיתי בזמן הסריקה, לדוגמה"

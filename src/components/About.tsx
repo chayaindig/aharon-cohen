@@ -1,37 +1,109 @@
-import { useMemo } from 'react'
-import pixelLogo from '../pixelLogo.json'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Marker, useInView } from './ui'
 
-const COLORS: Record<string, string> = { t: 'var(--color-teal)', g: 'var(--color-gold)', p: 'var(--color-petrol)' }
+/*
+  The bar mark of the logo, built from square pixels on a faint grid.
+  It assembles from the ground up, then never stops: a light wave climbs the bars, a few grid cells
+  spark, and on desktop the pixels near the cursor lift.
+*/
+const COLS = 38
+const ROWS = 44
+// three groups of four bars, each bar one step shorter than the one before, like the logo
+const GROUPS = [
+  { color: 'var(--color-teal)', top: 16 },
+  { color: 'var(--color-gold)', top: 10 },
+  { color: 'var(--color-petrol)', top: 2 },
+]
+const rand = (i: number) => Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1
 
-/* The bar mark of the logo, rebuilt from square pixels that assemble from the ground up */
 function PixelMark() {
   const [ref, on] = useInView<SVGSVGElement>(0.25)
-  const { cols, rows, cells } = pixelLogo as { cols: number; rows: number; cells: [number, number, string][] }
-  // stable pseudo-random order so it looks hand placed, rising from the bottom
-  const items = useMemo(
-    () =>
-      cells.map(([x, y, c], i) => {
-        const r = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1
-        return { x, y, c, d: Math.round((rows - y) * 22 + r * 380), o: 0.55 + r * 0.45 }
-      }),
-    [cells, rows],
-  )
+  const [live, setLive] = useState(false)
+  const svgRef = useRef<SVGSVGElement | null>(null)
+
+  const { cells, sparks } = useMemo(() => {
+    const cells: { x: number; y: number; color: string; d: number }[] = []
+    GROUPS.forEach((g, gi) => {
+      for (let b = 0; b < 4; b++) {
+        const x0 = (gi * 4 + b) * 3 + gi
+        for (let y = g.top + b * 2; y < ROWS; y++) {
+          for (const x of [x0, x0 + 1]) {
+            const i = cells.length
+            cells.push({ x, y, color: g.color, d: Math.round((ROWS - y) * 24 + gi * 120 + rand(i) * 260) })
+          }
+        }
+      }
+    })
+    const filled = new Set(cells.map((c) => `${c.x},${c.y}`))
+    const sparks: { x: number; y: number; d: number; t: number }[] = []
+    for (let i = 0; sparks.length < 36 && i < 4000; i++) {
+      const x = Math.floor(rand(i + 7) * COLS)
+      const y = Math.floor(rand(i + 911) * ROWS)
+      if (!filled.has(`${x},${y}`)) sparks.push({ x, y, d: Math.round(rand(i + 3) * 6000), t: 2600 + Math.round(rand(i + 5) * 3200) })
+    }
+    return { cells, sparks }
+  }, [])
+
+  // keep moving only while on screen
+  useEffect(() => {
+    const el = svgRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const svg = svgRef.current
+    if (!svg || e.pointerType !== 'mouse') return
+    const r = svg.getBoundingClientRect()
+    svg.style.setProperty('--mx', String(((e.clientX - r.left) / r.width) * COLS))
+    svg.style.setProperty('--my', String(((e.clientY - r.top) / r.height) * ROWS))
+  }
+  const onLeave = () => svgRef.current?.style.setProperty('--mx', '-99')
+
   return (
-    <svg ref={ref} viewBox={`0 0 ${cols} ${rows}`} className={`h-full w-auto ${on ? 'is-on' : ''}`} aria-hidden="true">
-      {items.map((it, i) => (
-        <rect
-          key={i}
-          className="px"
-          x={it.x + 0.08}
-          y={it.y + 0.08}
-          width="0.84"
-          height="0.84"
-          fill={COLORS[it.c]}
-          style={{ ['--d' as string]: `${it.d}ms`, ['--o' as string]: it.o }}
-        />
-      ))}
-    </svg>
+    <div className="h-full" onPointerMove={onMove} onPointerLeave={onLeave}>
+      <svg
+        ref={(n) => {
+          svgRef.current = n
+          ref.current = n
+        }}
+        viewBox={`0 0 ${COLS} ${ROWS}`}
+        className={`pixel-mark h-full w-auto ${on ? 'is-on' : ''} ${live ? 'is-live' : ''}`}
+        aria-hidden="true"
+      >
+        {/* the faint grid the mark is drawn on */}
+        <defs>
+          <pattern id="px-grid" width="1" height="1" patternUnits="userSpaceOnUse">
+            <rect x="0.12" y="0.12" width="0.76" height="0.76" rx="0.08" fill="var(--color-petrol)" fillOpacity="0.07" />
+          </pattern>
+        </defs>
+        <rect width={COLS} height={ROWS} fill="url(#px-grid)" className="px-grid" />
+        {sparks.map((s, i) => (
+          <rect key={`s${i}`} className="px-spark" x={s.x + 0.12} y={s.y + 0.12} width="0.76" height="0.76" rx="0.08" style={{ animationDelay: `${s.d}ms`, animationDuration: `${s.t}ms` }} />
+        ))}
+        {Array.from({ length: ROWS }, (_, y) => (
+          <g key={y} className="px-row" style={{ animationDelay: `${(ROWS - y) * 70}ms` }}>
+            {cells
+              .filter((c) => c.y === y)
+              .map((c) => (
+                <rect
+                  key={c.x}
+                  className="px"
+                  x={c.x + 0.1}
+                  y={c.y + 0.1}
+                  width="0.8"
+                  height="0.8"
+                  rx="0.08"
+                  fill={c.color}
+                  style={{ ['--d' as string]: `${c.d}ms`, ['--x' as string]: c.x, ['--y' as string]: c.y }}
+                />
+              ))}
+          </g>
+        ))}
+      </svg>
+    </div>
   )
 }
 
@@ -94,7 +166,7 @@ export default function About() {
             width="798"
             height="1500"
             loading="lazy"
-            className="absolute bottom-0 left-1/2 h-[92%] w-auto max-w-none -translate-x-[58%] drop-shadow-[0_30px_40px_rgb(5_58_65/0.28)]"
+            className="pointer-events-none absolute bottom-0 left-1/2 h-[92%] w-auto max-w-none -translate-x-[58%] drop-shadow-[0_30px_40px_rgb(5_58_65/0.28)]"
           />
         </figure>
       </div>

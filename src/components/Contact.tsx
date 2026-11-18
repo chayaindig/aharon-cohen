@@ -2,15 +2,18 @@ import logo from '../logo.svg?raw'
 import { contact } from '../data'
 import { WipeButton } from './ui'
 
-/* Closing band from the ANIMTD wipe-arrow-button prompt: the logo as a ghost, cut by the edge, 8/4 grid */
+// Only the bar mark: the same traced logo, framed on the bars so the lettering falls outside the view
+const mark = logo.replace(/viewBox="[^"]*"/, 'viewBox="1376 60 602 894"')
+
+/* Closing band from the ANIMTD wipe-arrow-button prompt: the mark as a ghost skyline rising from the bottom edge, 8/4 grid */
 export default function Contact() {
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative overflow-x-clip bg-night text-paper">
       <div className="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 -left-[12%] w-[min(110vw,1100px)] -translate-y-1/2 opacity-[0.07] [--logo-hole:transparent] [&_path]:fill-paper [&>svg]:h-auto [&>svg]:w-full"
-        dangerouslySetInnerHTML={{ __html: logo }}
+        className="pointer-events-none absolute bottom-0 left-[4%] h-[62%] opacity-[0.09] md:left-[6%] md:h-[86%] [&_path]:fill-paper [&>svg]:h-full [&>svg]:w-auto"
+        dangerouslySetInnerHTML={{ __html: mark }}
       />
       <div className="relative mx-auto grid max-w-[1360px] gap-x-16 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-[8fr_4fr]">
         <div>
