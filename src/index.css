@@ -301,3 +301,14 @@ body {
   .service-bar { transition: none; transform: none; }
   .service-card:hover .service-bar { transform: none; }
 }
+
+/* ---- Desktop pixel field (canvas) ---- */
+.pixel-field {
+  -webkit-mask-image: linear-gradient(to right, #000 var(--f1, 50%), transparent var(--f2, 80%)), linear-gradient(to bottom, transparent, #000 18%);
+  mask-image: linear-gradient(to right, #000 var(--f1, 50%), transparent var(--f2, 80%)), linear-gradient(to bottom, transparent, #000 18%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+/* the pause switch stops every animation that keeps running */
+html[data-motion="paused"] .px-row,
+html[data-motion="paused"] .px-spark { animation-play-state: paused !important; }

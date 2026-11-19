@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { contact } from '../data'
-import { WipeButton, usePrefersReducedMotion } from './ui'
+import { WipeButton, useMotionPaused, usePrefersReducedMotion } from './ui'
 
 /*
   The appraisal, in one shot: the building starts as a blueprint, a scan line runs down it and turns
@@ -26,6 +26,7 @@ const fmt = (n: number) => '₪' + Math.round(n).toLocaleString('en-US')
 
 export default function Hero({ start }: { start: boolean }) {
   const reduced = usePrefersReducedMotion()
+  const paused = useMotionPaused()
   const [p, setP] = useState(reduced ? 1 : 0)
   const frameRef = useRef<HTMLDivElement>(null)
   const [lens, setLens] = useState<{ x: number; y: number } | null>(null)
@@ -53,7 +54,7 @@ export default function Hero({ start }: { start: boolean }) {
   // Touch screens have no cursor: the lens glides over the building by itself, a tap moves it there
   const tapAt = useRef<{ x: number; y: number; t: number } | null>(null)
   useEffect(() => {
-    if (!done || reduced || !window.matchMedia('(hover: none)').matches) return
+    if (!done || reduced || paused || !window.matchMedia('(hover: none)').matches) return
     const frame = frameRef.current
     if (!frame) return
     let raf = 0
@@ -75,7 +76,7 @@ export default function Hero({ start }: { start: boolean }) {
       cancelAnimationFrame(raf)
       io.disconnect()
     }
-  }, [done, reduced])
+  }, [done, reduced, paused])
 
   const onTap = (e: React.PointerEvent) => {
     if (e.pointerType === 'mouse') return

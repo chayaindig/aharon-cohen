@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Marker, useInView } from './ui'
+import { Marker, MotionToggle, useInView, usePrefersReducedMotion } from './ui'
+import PixelField from './PixelField'
 
 /*
   The bar mark of the logo, built from square pixels on a faint grid.
@@ -137,11 +138,36 @@ function BlurWords({ text }: { text: string }) {
   )
 }
 
+// Desktop with a mouse gets the live canvas field; phones and tablets keep the SVG mark
+function useDesktopField() {
+  const q = '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
+  const [on, setOn] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(q)
+    const f = () => setOn(mq.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+  return on
+}
+
 export default function About() {
+  const desktop = useDesktopField()
+  const reduced = usePrefersReducedMotion()
+  const sectionRef = useRef<HTMLElement>(null)
+  const portraitRef = useRef<HTMLImageElement>(null)
   return (
-    <section id="about" aria-labelledby="about-title" className="grain relative overflow-x-clip bg-sand pt-24 md:pt-32">
+    <section ref={sectionRef} id="about" aria-labelledby="about-title" className="grain relative overflow-x-clip bg-sand pt-24 md:pt-32">
+      {desktop && (
+        <PixelField
+          anchor={portraitRef}
+          area={sectionRef}
+          reduced={reduced}
+          className="pixel-field pointer-events-none absolute inset-0 size-full"
+        />
+      )}
       <div className="mx-auto grid max-w-[1360px] items-end gap-12 px-5 md:px-10 lg:grid-cols-[7fr_5fr] lg:gap-20">
-        <div className="pb-4 md:pb-28">
+        <div className="relative pb-4 md:pb-28">
           <h2 id="about-title" className="font-display text-section text-petrol">
             ליווי אישי, מהשיחה
             <br />
@@ -157,10 +183,13 @@ export default function About() {
         </div>
 
         <figure className="relative mx-auto h-[min(118vw,560px)] w-full max-w-[480px] lg:h-[640px] lg:max-w-none">
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 py-2">
-            <PixelMark />
-          </div>
+          {!desktop && (
+            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 py-2">
+              <PixelMark />
+            </div>
+          )}
           <img
+            ref={portraitRef}
             src={`${import.meta.env.BASE_URL}img/aharon.webp`}
             alt="אהרן כהן, שמאי מקרקעין"
             width="798"
@@ -168,6 +197,7 @@ export default function About() {
             loading="lazy"
             className="pointer-events-none absolute bottom-0 left-1/2 h-[92%] w-auto max-w-none -translate-x-[58%] drop-shadow-[0_30px_40px_rgb(5_58_65/0.28)]"
           />
+          <MotionToggle className="absolute top-0 left-0 z-[3]" />
         </figure>
       </div>
     </section>
