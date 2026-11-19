@@ -28,7 +28,7 @@ export default function Reviews() {
             <br />
             הלקוחות
           </h2>
-          <div className="hidden gap-2 md:flex">
+          <div className="hidden gap-2 md:flex lg:hidden">
             <button type="button" onClick={() => scrollBy(-1)} aria-label="ההמלצה הקודמת" className="grid size-12 place-items-center rounded-full border border-petrol/25 text-petrol transition-colors hover:bg-petrol hover:text-paper">
               <Icon name="arrow" className="size-5 rotate-180" />
             </button>
@@ -40,7 +40,7 @@ export default function Reviews() {
 
         {/* the big box */}
         <figure className="relative mt-12 min-h-[19rem] overflow-hidden rounded-[22px] bg-petrol-deep p-8 text-paper md:min-h-[21rem] md:p-14" aria-live="polite">
-          <span aria-hidden="true" className="ghost-num absolute -top-4 left-6 text-[clamp(9rem,6rem+8vw,15rem)] text-gold/25">
+          <span aria-hidden="true" className="ghost-num absolute top-6 left-8 h-[0.5em] overflow-visible text-[clamp(9rem,6rem+8vw,15rem)] leading-[0.75] text-gold/25">
             ”
           </span>
           <AnimatePresence mode="wait" initial={false}>
@@ -61,10 +61,10 @@ export default function Reviews() {
           </AnimatePresence>
         </figure>
 
-        {/* the carousel */}
-        <ul ref={track} className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2" aria-label="עוד המלצות">
+        {/* the carousel (phones and tablets); on desktop all four sit in one row */}
+        <ul ref={track} className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 lg:grid lg:grid-cols-4 lg:overflow-visible" aria-label="עוד המלצות">
           {others.map((r) => (
-            <li key={r.i} className="w-[min(82%,22rem)] shrink-0 snap-start">
+            <li key={r.i} className="w-[min(82%,22rem)] shrink-0 snap-start lg:w-auto">
               <button
                 type="button"
                 onClick={() => setActive(r.i)}
