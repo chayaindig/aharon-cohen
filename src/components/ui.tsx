@@ -9,7 +9,7 @@ import pause from '../icons/pause.svg?raw'
 import play from '../icons/play.svg?raw'
 
 // Icons from Magnific (Chaya's licence): appraisal 9470368, consult 13390829,
-// opinion 9875211, whatsapp 4406172, phone 2549905, arrow 17927915, pause 890642, play 54377
+// opinion 9875211, whatsapp 174879, phone 2549905, arrow 17927915, pause 890642, play 54377
 const icons = { appraisal, consult, opinion, whatsapp, phone, arrow, pause, play }
 export type IconName = keyof typeof icons
 
