@@ -55,7 +55,7 @@ export default function PixelField({
     let bars: Bar[] = []
     let raf = 0
     let visible = false
-    let t0 = -1 // intro start, set the first time the field is seen
+    let t0: number | null = null // intro start, set the first time the field is seen
     let last = performance.now()
     let clock = 0 // seconds of motion, frozen while paused
     const mouse = { x: -1e4, y: -1e4, on: false }
@@ -189,8 +189,8 @@ export default function PixelField({
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
       clock += dt
-      if (t0 < 0) t0 = clock
-      draw(clock, reduced ? 9 : clock - t0)
+      if (t0 === null) t0 = clock
+      draw(clock, still ? 9 : clock - t0)
       raf = visible && !paused && !reduced ? requestAnimationFrame(frame) : 0
     }
     const kick = () => {
@@ -201,10 +201,7 @@ export default function PixelField({
 
     layout()
     // paused or reduced motion: one finished still frame, nothing moves
-    if (paused || reduced) {
-      if (t0 < 0) t0 = -9
-      draw(clock, 9)
-    }
+    if (still) draw(clock, 9)
 
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting
