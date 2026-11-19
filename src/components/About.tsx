@@ -4,8 +4,7 @@ import PixelField from './PixelField'
 
 /*
   The bar mark of the logo, built from square pixels on a faint grid.
-  It assembles from the ground up, then never stops: a light wave climbs the bars, a few grid cells
-  spark, and on desktop the pixels near the cursor lift.
+  It assembles from the ground up, then never stops: a light wave climbs the bars, and on desktop the pixels near the cursor lift.
 */
 const COLS = 38
 const ROWS = 44
@@ -22,7 +21,7 @@ function PixelMark() {
   const [live, setLive] = useState(false)
   const svgRef = useRef<SVGSVGElement | null>(null)
 
-  const { cells, sparks } = useMemo(() => {
+  const { cells } = useMemo(() => {
     const cells: { x: number; y: number; color: string; d: number }[] = []
     GROUPS.forEach((g, gi) => {
       for (let b = 0; b < 4; b++) {
@@ -35,14 +34,7 @@ function PixelMark() {
         }
       }
     })
-    const filled = new Set(cells.map((c) => `${c.x},${c.y}`))
-    const sparks: { x: number; y: number; d: number; t: number }[] = []
-    for (let i = 0; sparks.length < 36 && i < 4000; i++) {
-      const x = Math.floor(rand(i + 7) * COLS)
-      const y = Math.floor(rand(i + 911) * ROWS)
-      if (!filled.has(`${x},${y}`)) sparks.push({ x, y, d: Math.round(rand(i + 3) * 6000), t: 2600 + Math.round(rand(i + 5) * 3200) })
-    }
-    return { cells, sparks }
+    return { cells }
   }, [])
 
   // keep moving only while on screen
@@ -81,9 +73,6 @@ function PixelMark() {
           </pattern>
         </defs>
         <rect width={COLS} height={ROWS} fill="url(#px-grid)" className="px-grid" />
-        {sparks.map((s, i) => (
-          <rect key={`s${i}`} className="px-spark" x={s.x + 0.12} y={s.y + 0.12} width="0.76" height="0.76" rx="0.08" style={{ animationDelay: `${s.d}ms`, animationDuration: `${s.t}ms` }} />
-        ))}
         {Array.from({ length: ROWS }, (_, y) => (
           <g key={y} className="px-row" style={{ animationDelay: `${(ROWS - y) * 70}ms` }}>
             {cells
@@ -197,7 +186,7 @@ export default function About() {
             loading="lazy"
             className="pointer-events-none absolute bottom-0 left-1/2 h-[92%] w-auto max-w-none -translate-x-[58%] drop-shadow-[0_30px_40px_rgb(5_58_65/0.28)]"
           />
-          <MotionToggle className="absolute top-0 left-0 z-[3]" />
+          <MotionToggle className="absolute bottom-3 left-0 z-[3]" />
         </figure>
       </div>
     </section>

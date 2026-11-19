@@ -310,8 +310,7 @@ body {
   mask-composite: intersect;
 }
 /* the pause switch stops every animation that keeps running */
-html[data-motion="paused"] .px-row,
-html[data-motion="paused"] .px-spark { animation-play-state: paused !important; }
+html[data-motion="paused"] .px-row { animation: none !important; }
 
 /* ---- Thank-you popup ---- */
 .thanks { animation: thanks-fade 300ms ease both; }

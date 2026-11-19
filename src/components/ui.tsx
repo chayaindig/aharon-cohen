@@ -129,15 +129,17 @@ export function useMotionPaused() {
 
 export function MotionToggle({ className = '' }: { className?: string }) {
   const paused = useMotionPaused()
+  const label = paused ? 'הפעלת אנימציה' : 'עצירת אנימציה'
   return (
     <button
       type="button"
       onClick={() => setMotionPaused(!paused)}
       aria-pressed={paused}
-      className={`inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper/90 px-4 text-note font-medium text-petrol shadow-[0_8px_24px_-14px_rgb(5_58_65/0.5)] transition-colors hover:border-petrol/40 ${className}`}
+      aria-label={label}
+      title={label}
+      className={`grid size-10 place-items-center rounded-full border border-line bg-paper/85 text-petrol transition-colors hover:border-petrol/40 hover:bg-paper ${className}`}
     >
       <Icon name={paused ? 'play' : 'pause'} className="size-3" />
-      {paused ? 'הפעלת אנימציה' : 'עצירת אנימציה'}
     </button>
   )
 }
