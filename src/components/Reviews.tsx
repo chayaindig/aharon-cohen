@@ -62,7 +62,7 @@ export default function Reviews() {
         </figure>
 
         {/* the carousel (phones and tablets); on desktop all four sit in one row */}
-        <ul ref={track} className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 lg:grid lg:grid-cols-4 lg:overflow-visible" aria-label="עוד המלצות">
+        <ul ref={track} className="no-scrollbar -mx-5 mt-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto scroll-smooth px-5 pb-2 md:-mx-10 md:scroll-px-10 md:px-10 lg:mx-0 lg:grid lg:grid-cols-4 lg:overflow-visible lg:px-0" aria-label="עוד המלצות">
           {others.map((r) => (
             <li key={r.i} className="w-[min(82%,22rem)] shrink-0 snap-start lg:w-auto">
               <button
