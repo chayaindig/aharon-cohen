@@ -2,11 +2,10 @@ import { useEffect, useRef, type RefObject } from 'react'
 import { useMotionPaused } from './ui'
 
 /*
-  Desktop version of the pixel mark: a live value chart on a pixel field that bleeds to the page edge.
-  The twelve logo bars stand behind the portrait and breathe like a market graph. Every few seconds a
-  gold scan (the same one as the hero) sweeps across and each bar it passes locks to its exact height,
-  with a gold value pixel on top. The cursor lights the field in gold and pulls the nearest bars up,
-  a click sends a ripple. Canvas, desktop only (phones keep the SVG version).
+  Desktop version of the pixel mark: the twelve logo bars, built from pixels on a quiet field that
+  bleeds to the page edge. The bars rise and fall slowly, a whole pixel at a time, like a value graph.
+  The cursor warms the field in gold and pulls the nearest bars up, a click sends a ripple.
+  Canvas, desktop only (phones keep the SVG version).
 */
 
 const CELL = 14
@@ -20,9 +19,6 @@ const GROUPS = [
   { color: GOLD, top: 10 },
   { color: PETROL, top: 2 },
 ]
-const SCAN_EVERY = 7 // s
-const SCAN_TIME = 2.4 // s to cross the field
-const LOCK_HOLD = 2.6 // s a bar stays exact after the scan passes
 
 const rand = (i: number) => Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v))
@@ -100,33 +96,25 @@ export default function PixelField({
     const still = reduced || paused
     const draw = (t: number, intro: number) => {
       ctx.clearRect(0, 0, w, h)
-      const period = t % SCAN_EVERY
-      const scanX = !still && period < SCAN_TIME ? (period / SCAN_TIME) * (w + 6 * CELL) - 3 * CELL : -1e4
       const mx = mouse.on && !still ? mouse.x / CELL : -1e4
       const my = mouse.on && !still ? mouse.y / CELL : -1e4
       const gridIn = clamp01(intro / 0.9)
 
       // bar heights this frame
-      const heights = new Map<number, { bar: Bar; top: number; lock: number }>()
+      const heights = new Map<number, { bar: Bar; top: number }>()
       for (const bar of bars) {
-        const x = (bar.col + 1) * CELL
-        // time since the scan passed this bar in the current cycle
-        const passAt = ((x + 3 * CELL) / (w + 6 * CELL)) * SCAN_TIME
-        const since = period >= passAt ? period - passAt : period + SCAN_EVERY - passAt
-        const lock = still ? 1 : clamp01(1 - (since - LOCK_HOLD) / 0.8)
-        const breath = still ? 0 : 1.8 * Math.sin(t * 0.7 + bar.b * 0.8) + 0.8 * Math.sin(t * 1.9 + bar.b * 2.1)
+                const breath = still ? 0 : 2 * Math.sin(t * 0.45 + bar.b * 0.8)
         const pull = Math.max(0, 1 - Math.abs(mx - bar.col - 0.5) / 5)
         const want = mouse.on && my > 0 ? pull * Math.min(6, Math.max(0, rows - my - bar.h)) : 0
         bar.lift = still ? 0 : bar.lift + (want - bar.lift) * 0.12
-        const top = bar.h + breath * (1 - lock) + bar.lift
-        heights.set(bar.col, { bar, top, lock })
-        heights.set(bar.col + 1, { bar, top, lock })
+        const top = Math.round(bar.h + breath + bar.lift)
+        heights.set(bar.col, { bar, top })
+        heights.set(bar.col + 1, { bar, top })
       }
 
       for (let c = 0; c < cols; c++) {
         const col = heights.get(c)
         const x = c * CELL
-        const dScan = Math.abs(x + CELL / 2 - scanX) / CELL
         for (let r = 0; r < rows; r++) {
           // r counts from the bottom
           const y = h - (r + 1) * CELL
@@ -145,20 +133,9 @@ export default function PixelField({
             const bar = col.bar
             const appear = clamp01((intro - (r * 0.022 + bar.g * 0.12 + rand(i) * 0.25)) / 0.35)
             if (appear <= 0) continue
-            const frac = r === Math.ceil(col.top) - 1 ? col.top - Math.floor(col.top) || 1 : 1
-            const wave = still ? 1 : 0.5 + 0.5 * Math.sin(t * 1.6 - r * 0.22 + bar.b * 0.15)
-            ctx.globalAlpha = appear * frac * (0.62 + 0.38 * wave)
-            ctx.fillStyle = dScan < 1.5 ? GOLD : bar.color
+            ctx.globalAlpha = appear
+            ctx.fillStyle = bar.color
             const s = CELL * FILL * (1 + 0.35 * near + 0.25 * ring) * (0.4 + 0.6 * appear)
-            ctx.fillRect(x + (CELL - s) / 2, y + (CELL - s) / 2, s, s)
-            continue
-          }
-
-          // the gold value pixel that sits on a locked bar
-          if (!still && col && r === Math.ceil(col.top) && col.lock > 0 && intro > 1.4) {
-            ctx.globalAlpha = col.lock * (0.75 + 0.25 * Math.sin(t * 5))
-            ctx.fillStyle = GOLD
-            const s = CELL * FILL
             ctx.fillRect(x + (CELL - s) / 2, y + (CELL - s) / 2, s, s)
             continue
           }
@@ -166,7 +143,6 @@ export default function PixelField({
           // the field
           let a = 0.07 * gridIn
           let gold = 0
-          if (dScan < 3) gold = Math.max(gold, 0.42 * (1 - dScan / 3))
           gold = Math.max(gold, 0.5 * near, 0.6 * ring)
           if (gold > 0.02) {
             ctx.globalAlpha = gold * gridIn

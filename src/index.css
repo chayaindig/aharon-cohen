@@ -272,11 +272,6 @@ body {
   transition: opacity 500ms ease var(--d), transform 600ms var(--ease-out-soft) var(--d), scale 220ms ease 0s;
 }
 .is-on .px { opacity: 1; transform: none; }
-.px-row { animation: px-wave 4.2s ease-in-out infinite; animation-play-state: paused; }
-.px-spark { fill: var(--color-gold); opacity: 0; animation: px-spark 3s ease-in-out infinite; animation-play-state: paused; }
-.is-live .px-row, .is-live .px-spark { animation-play-state: running; }
-@keyframes px-wave { 0%, 100% { fill-opacity: 1; } 50% { fill-opacity: 0.45; } }
-@keyframes px-spark { 0%, 100% { opacity: 0; } 50% { opacity: 0.85; } }
 
 /* ---- Hero scan ---- */
 .hero-tag { opacity: 0; transform: translateY(6px) scale(0.96); transition: opacity 360ms ease, transform 420ms var(--ease-out-soft); }
@@ -285,7 +280,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .preloader { display: none; }
   .px, .hero-tag { transition: none; opacity: 1; transform: none; }
-  .px-row, .px-spark { animation: none; }
 }
 
 /* ---- Service cards: one logo colour each ---- */
@@ -310,7 +304,7 @@ body {
   mask-composite: intersect;
 }
 /* the pause switch stops every animation that keeps running */
-html[data-motion="paused"] .px-row { animation: none !important; }
+
 
 /* ---- Thank-you popup ---- */
 .thanks { animation: thanks-fade 300ms ease both; }
