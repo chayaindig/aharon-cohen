@@ -117,8 +117,9 @@ function NotFound() {
             <g fill="var(--color-paper)" fillOpacity=".55" fontSize="13" fontFamily="var(--font-sans)" textAnchor="middle">
               <text x="200" y="412">0.00 מ׳</text>
               <text x="14" y="214" transform="rotate(-90 14 214)">0.00 מ׳</text>
-              <text x="200" y="205" fontSize="15" fillOpacity=".7">מגרש ריק</text>
-              <text x="200" y="228" fontSize="12">גוש 404, חלקה לא נמצאה</text>
+              <text x="200" y="128" fontSize="15" fillOpacity=".7">מגרש ריק</text>
+              <text x="200" y="262" fontSize="128" fontFamily="var(--font-display)" fill="var(--color-gold)" fillOpacity=".9">404</text>
+              <text x="200" y="296" fontSize="14">גוש 404, חלקה לא נמצאה</text>
             </g>
             {[[60, 60], [340, 60], [60, 360], [340, 360]].map(([x, y]) => (
               <circle key={`${x}${y}`} cx={x} cy={y} r="3.5" fill="var(--color-gold)" />
