@@ -38,7 +38,9 @@ export default function Contact() {
             </WipeButton>
           </div>
           <p className="mt-8 text-note text-paper/55">
-            {contact.address} · זמין {contact.hours}
+            המשרד ב{contact.address} · זמין {contact.hours}
+            <br />
+            שירות ב{contact.areas}
           </p>
         </div>
 

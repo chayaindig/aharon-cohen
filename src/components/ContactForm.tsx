@@ -89,7 +89,7 @@ export default function ContactForm() {
           </select>
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-note text-paper/70">כמה מילים על הנכס</span>
+          <span className="mb-1.5 block text-note text-paper/70">כמה מילים על הנכס (לא חובה)</span>
           <textarea name="message" rows={3} className="field min-h-[96px] resize-y" placeholder="למשל: דירת 4 חדרים באפרת, צריך שומה לבנק עד סוף החודש" />
         </label>
 

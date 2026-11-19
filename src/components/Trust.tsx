@@ -5,8 +5,8 @@ export default function Trust() {
   const years = new Date().getFullYear() - contact.since
   const items = [
     { big: `${years}+`, label: 'שנות ניסיון כשמאי מוסמך' },
-    { big: 'רישיון', label: 'ממועצת שמאי המקרקעין, משרד המשפטים' },
-    { big: 'תקן 19', label: 'שומות לבנקים למשכנתא ולאשראי' },
+    { big: 'רישיון', label: `מס׳ ${contact.license}, מועצת שמאי המקרקעין` },
+    { big: 'בנקים', label: `ברשימת השמאים של ${contact.banks.join(' ושל ')}` },
     { big: 'אישי', label: 'כל שומה מול השמאי עצמו, לא מול מוקד' },
   ]
   return (
