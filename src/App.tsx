@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Preloader from './components/Preloader'
 import Header from './components/Header'
-import Hero from './components/Hero'
+import Hero from './components/HeroVideo'
 import Trust from './components/Trust'
 import About from './components/About'
 import Services from './components/Services'
